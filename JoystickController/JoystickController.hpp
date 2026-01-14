@@ -136,15 +136,15 @@ private:
 
 	struct Calibration
 	{
-		std::size_t joystickIndex;
-		AxisCalibration x;
-		AxisCalibration y;
-		AxisCalibration u;
-		AxisCalibration v;
-		AxisCalibration z;
-		AxisCalibration r;
-		AxisCalibration povX;
-		AxisCalibration povY;
+		std::size_t joystickIndex{ 0u };
+		AxisCalibration x{};
+		AxisCalibration y{};
+		AxisCalibration u{};
+		AxisCalibration v{};
+		AxisCalibration z{};
+		AxisCalibration r{};
+		AxisCalibration povX{};
+		AxisCalibration povY{};
 	};
 
 	std::vector<Calibration> m_calibrations;

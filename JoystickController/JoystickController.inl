@@ -39,6 +39,7 @@ namespace joystickcontroller
 inline JoystickController::JoystickController()
 	: m_areJoysticksConnected(8u)
 	, m_numberOfConnectedJoysticks{ 0u }
+	, m_calibrations{}
 {
 	sf::Joystick::update();
 	for (std::size_t j{ 0u }; j < m_areJoysticksConnected.size(); ++j)
@@ -46,7 +47,7 @@ inline JoystickController::JoystickController()
 		if (m_areJoysticksConnected[j] = sf::Joystick::isConnected(static_cast<unsigned int>(j)))
 		{
 			++m_numberOfConnectedJoysticks;
-			Calibration calibration;
+			Calibration calibration{};
 			calibration.joystickIndex = j;
 			m_calibrations.push_back(calibration);
 		}
@@ -60,7 +61,7 @@ inline std::size_t JoystickController::getConnectedCount() const
 
 inline std::vector<std::size_t> JoystickController::getConnectedIndices() const
 {
-	std::vector<std::size_t> indices;
+	std::vector<std::size_t> indices{};
 	for (std::size_t j{ 0u }; j < m_areJoysticksConnected.size(); ++j)
 	{
 		if (m_areJoysticksConnected[j])
@@ -74,7 +75,7 @@ inline std::size_t JoystickController::getButtonCount(const std::size_t joystick
 	return sf::Joystick::getButtonCount(static_cast<unsigned int>(joystickIndex));
 }
 
-inline bool JoystickController::getHasAxis(const std::size_t joystickIndex, Axis axis) const
+inline bool JoystickController::getHasAxis(const std::size_t joystickIndex, const Axis axis) const
 {
 	return sf::Joystick::hasAxis(static_cast<unsigned int>(joystickIndex), priv_getSfmlJoystickAxis(axis));
 }
@@ -103,7 +104,7 @@ inline std::size_t JoystickController::getAxisCount(const std::size_t joystickIn
 
 inline std::vector<Axis> JoystickController::getAxes(const std::size_t joystickIndex) const
 {
-	std::vector<Axis> axes;
+	std::vector<Axis> axes{};
 	if (getHasAxis(joystickIndex, Axis::X))
 		axes.push_back(Axis::X);
 	if (getHasAxis(joystickIndex, Axis::Y))
@@ -167,16 +168,17 @@ inline float JoystickController::getAxisPosition(const std::size_t joystickIndex
 {
 	// get calibrated position i.e. value is modified dependant on calibration settings
 
-	float n;
+	float n{};
 
 	const Calibration& c{ m_calibrations[priv_getCalibrationIndex(joystickIndex)] };
 
-	float origValue{ sf::Joystick::getAxisPosition(static_cast<unsigned int>(joystickIndex), priv_getSfmlJoystickAxis(axis)) };
+	const float origValue{ sf::Joystick::getAxisPosition(static_cast<unsigned int>(joystickIndex), priv_getSfmlJoystickAxis(axis)) };
 
 	const AxisCalibration* a{ nullptr };
 
 	switch (axis)
 	{
+	default:
 	case Axis::X:
 		a = &c.x;
 		break;
@@ -201,8 +203,6 @@ inline float JoystickController::getAxisPosition(const std::size_t joystickIndex
 	case Axis::PovY:
 		a = &c.povY;
 		break;
-	default:
-		a = &c.x;
 	}
 
 	n = origValue - a->zero;
@@ -275,13 +275,13 @@ inline float JoystickController::getAxis2dDirection(const std::size_t joystickIn
 	switch (axisPair)
 	{
 	case AxisPair::XY:
-		return { getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::X, Axis::Y, invertX, invertY) };
+		return getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::X, Axis::Y, invertX, invertY);
 	case AxisPair::UV:
-		return { getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::U, Axis::V, invertX, invertY) };
+		return getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::U, Axis::V, invertX, invertY);
 	case AxisPair::PovXY:
-		return { getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, invertX, invertY) };
+		return getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, invertX, invertY);
 	default:
-		return { 0.f };
+		return 0.f;
 	}
 }
 
@@ -300,13 +300,13 @@ inline float JoystickController::getAxis2dStrength(const std::size_t joystickInd
 	switch (axisPair)
 	{
 	case AxisPair::XY:
-		return { getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::X, Axis::Y) };
+		return getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::X, Axis::Y);
 	case AxisPair::UV:
-		return { getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::U, Axis::V) };
+		return getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::U, Axis::V);
 	case AxisPair::PovXY:
-		return { getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY) };
+		return getAxis2dStrengthCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY);
 	default:
-		return { 0.f };
+		return 0.f;
 	}
 }
 
@@ -326,13 +326,13 @@ inline std::size_t JoystickController::getAxis2dDirectionIndex(const std::size_t
 	switch (axisPair)
 	{
 	case AxisPair::XY:
-		return { getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::X, Axis::Y, numberOfSegments, invertX, invertY) };
+		return getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::X, Axis::Y, numberOfSegments, invertX, invertY);
 	case AxisPair::UV:
-		return { getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::U, Axis::V, numberOfSegments,invertX, invertY) };
+		return getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::U, Axis::V, numberOfSegments,invertX, invertY);
 	case AxisPair::PovXY:
-		return { getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, numberOfSegments,invertX, invertY) };
+		return getAxis2dDirectionIndexCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, numberOfSegments,invertX, invertY);
 	default:
-		return { 0u };
+		return 0u;
 	}
 }
 
@@ -359,13 +359,13 @@ inline std::size_t JoystickController::getAxis2dStrengthIndex(const std::size_t 
 	switch (axisPair)
 	{
 	case AxisPair::XY:
-		return { getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::X, Axis::Y, numberOfSteps) };
+		return getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::X, Axis::Y, numberOfSteps);
 	case AxisPair::UV:
-		return { getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::U, Axis::V, numberOfSteps) };
+		return getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::U, Axis::V, numberOfSteps);
 	case AxisPair::PovXY:
-		return { getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, numberOfSteps) };
+		return getAxis2dStrengthIndexCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, numberOfSteps);
 	default:
-		return { 0u };
+		return 0u;
 	}
 }
 
@@ -381,13 +381,13 @@ inline int JoystickController::getAxis2dAsPovHat(const std::size_t joystickIndex
 	switch (axisPair)
 	{
 	case AxisPair::XY:
-		return { getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::X, Axis::Y, invertX, invertY) };
+		return getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::X, Axis::Y, invertX, invertY);
 	case AxisPair::UV:
-		return { getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::U, Axis::V, invertX, invertY) };
+		return getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::U, Axis::V, invertX, invertY);
 	case AxisPair::PovXY:
-		return { getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, invertX, invertY) };
+		return getAxis2dAsPovHatCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, invertX, invertY);
 	default:
-		return { 0u };
+		return 0u;
 	}
 }
 
@@ -600,8 +600,8 @@ inline sf::Joystick::Axis JoystickController::priv_getSfmlJoystickAxis(const Axi
 		return sf::Joystick::Axis::PovX;
 	case Axis::PovY:
 		return sf::Joystick::Axis::PovY;
-	case Axis::R:
 	default:
+	case Axis::R:
 		return sf::Joystick::Axis::R;
 	}
 }
