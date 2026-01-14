@@ -340,7 +340,7 @@ inline std::size_t JoystickController::getAxis2dDirectionIndexCustomAxisPair(con
 {
 	assert(numberOfSegments > 1u);
 
-	float angle{ getAxis2dDirectionCustomAxisPair(joystickIndex, axisX, axisY, invertX, invertY) + halfPiFloat }; // add quarter turn so that first index is straight up
+	float angle{ getAxis2dDirectionCustomAxisPair(joystickIndex, axisX, axisY, invertX, invertY).asRadians() + halfPiFloat}; // add quarter turn so that first index is straight up
 	while (angle > doublePiFloat)
 		angle -= doublePiFloat;
 	while (angle < 0.f)
