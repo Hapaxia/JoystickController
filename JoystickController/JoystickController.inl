@@ -270,7 +270,7 @@ inline sf::Vector2f JoystickController::getAxis2dPositionCustomAxisPair(const st
 
 
 
-inline float JoystickController::getAxis2dDirection(const std::size_t joystickIndex, const AxisPair axisPair, const bool invertX, const bool invertY) const
+inline sf::Angle JoystickController::getAxis2dDirection(const std::size_t joystickIndex, const AxisPair axisPair, const bool invertX, const bool invertY) const
 {
 	switch (axisPair)
 	{
@@ -281,18 +281,18 @@ inline float JoystickController::getAxis2dDirection(const std::size_t joystickIn
 	case AxisPair::PovXY:
 		return getAxis2dDirectionCustomAxisPair(joystickIndex, Axis::PovX, Axis::PovY, invertX, invertY);
 	default:
-		return 0.f;
+		return sf::Angle::Zero;
 	}
 }
 
-inline float JoystickController::getAxis2dDirectionCustomAxisPair(const std::size_t joystickIndex, const Axis axisX, const Axis axisY, const bool invertX, const bool invertY) const
+inline sf::Angle JoystickController::getAxis2dDirectionCustomAxisPair(const std::size_t joystickIndex, const Axis axisX, const Axis axisY, const bool invertX, const bool invertY) const
 {
 	sf::Vector2f position{ getAxisPosition(joystickIndex, axisX), -getAxisPosition(joystickIndex, axisY) };
 	if (invertX)
 		position.x = -position.x;
 	if (invertY)
 		position.y = -position.y;
-	return std::atan2(position.x, position.y) - halfPiFloat;
+	return sf::radians(std::atan2(position.x, position.y) - halfPiFloat);
 }
 
 inline float JoystickController::getAxis2dStrength(const std::size_t joystickIndex, const AxisPair axisPair) const

@@ -32,6 +32,7 @@
 #include <vector>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/System/Angle.hpp>
 
 namespace joystickcontroller
 {
@@ -77,8 +78,8 @@ public:
 	sf::Vector2f getAxis2dPosition(std::size_t joystickIndex, AxisPair axisPair, bool invertX = false, bool invertY = false) const;
 	sf::Vector2f getAxis2dPositionCustomAxisPair(std::size_t joystickIndex, Axis axisX, Axis axisY, bool invertX = false, bool invertY = false) const;
 
-	float getAxis2dDirection(std::size_t joystickIndex, AxisPair axisPair, bool invertX = false, bool invertY = false) const;
-	float getAxis2dDirectionCustomAxisPair(std::size_t joystickIndex, Axis axisX, Axis axisY, bool invertX = false, bool invertY = false) const;
+	sf::Angle getAxis2dDirection(std::size_t joystickIndex, AxisPair axisPair, bool invertX = false, bool invertY = false) const;
+	sf::Angle getAxis2dDirectionCustomAxisPair(std::size_t joystickIndex, Axis axisX, Axis axisY, bool invertX = false, bool invertY = false) const;
 	float getAxis2dStrength(std::size_t joystickIndex, AxisPair axisPair) const;
 	float getAxis2dStrengthCustomAxisPair(std::size_t joystickIndex, Axis axisX, Axis axisY) const;
 
